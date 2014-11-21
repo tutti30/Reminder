@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.wardziniak.reminder" >
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.wardziniak.reminder.MainActivity"
+            android:label="@string/app_name" >
+        </activity>
+
+        <service
+            android:name=".services.AlarmManagerService"
+            android:exported="false" >
+        </service>
+
+        <receiver
+            android:name="com.wardziniak.reminder.receivers.AlarmaReceiver"
+            android:enabled="true"
+            android:exported="true" >
+        </receiver>
+
+        <provider
+            android:name="com.wardziniak.reminder.providers.AlaramProvider"
+            android:authorities="com.wardziniak.reminder.provider" >
+        </provider>
+
+        <activity
+            android:name="com.wardziniak.reminder.activities.AddAlarmActivity"
+            android:label="@string/title_activity_add_alarm" >
+        </activity>
+        <activity
+            android:name="com.wardziniak.reminder.activities.AlarmListActivity"
+            android:label="@string/title_activity_alarm_list" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.wardziniak.reminder.activities.AlarmDetailActivity"
+            android:label="@string/title_activity_alarm_detail" >
+        </activity>
+
+    </application>
+
+</manifest>

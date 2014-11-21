@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Reminder</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_add_alarm">AddAlarmActivity</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_alarm_list">AlarmListActivity</string>
+    <string name="title_activity_alaram_list">AlaramListActivity</string>
+
+    <!-- Menu item -->
+    <string name="menu_item_new_alarm_label">New Alarm</string>
+    <string name="title_activity_alarm_detail">AlarmDetailActivity</string>
+
+</resources>
