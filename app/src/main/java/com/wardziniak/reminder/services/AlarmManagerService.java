@@ -35,6 +35,7 @@ public class AlarmManagerService extends IntentService {
     public static final String EXTRA_ALARM_ID = "alarmId";
     public static final String ACTION_REMOVE_ALARM = "REMOVE_ALARM";
     public static final String ACTION_ADD_ALARM = "ADD_ALARM";
+    public static final String ACTION_EDIT_ALARM = "EDIT_ALARM";
 
     // TODO: Rename actions, choose action names that describe tasks that this
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
@@ -58,6 +59,9 @@ public class AlarmManagerService extends IntentService {
         else if (ACTION_REMOVE_ALARM.equals(acion)) {
             removeAlarm(intent);
             return;
+        }
+        else if (ACTION_EDIT_ALARM.equals(acion)) {
+
         }
         Log.d(TAG, "onHandleIntent");
     }
@@ -111,5 +115,8 @@ public class AlarmManagerService extends IntentService {
         Log.d(TAG, "addAlarm:" + uri);
     }
 
+    public void editAlarm(Intent intent) {
+
+    }
 
 }

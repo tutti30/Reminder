@@ -2,6 +2,8 @@ package com.wardziniak.reminder.activities;
 
 import android.app.TimePickerDialog;
 
+import java.util.Calendar;
+
 /**
  * Created by wardziniak on 11/13/14.
  */
@@ -15,6 +17,8 @@ public interface AddAlarmFragmentInteractionListener extends TimePickerDialog.On
 
     public void showTimePicker();
 
-    public void setAlarm(String message);
+    public void setAlarm(long alarmId, String message);
+
+    public void onAlarmLoad(Calendar calendar);
 
 }

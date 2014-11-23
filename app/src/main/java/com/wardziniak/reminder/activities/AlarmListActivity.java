@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.wardziniak.reminder.R;
+import com.wardziniak.reminder.fragments.AddAlarmFragment;
 import com.wardziniak.reminder.fragments.AlarmListFragment;
 import com.wardziniak.reminder.fragments.lists.AlarmItem;
 import com.wardziniak.reminder.services.AlarmManagerService;
@@ -103,7 +104,9 @@ public class AlarmListActivity extends Activity implements AlarmListFragmentInte
 
     @Override
     public void onListItemClick(AlarmItem alarmItem) {
-
+        Intent intent = new Intent(this, AddAlarmActivity.class);
+        intent.putExtra(AddAlarmFragment.ARG_ALARM_ID, alarmItem.getId());
+        startActivity(intent);
     }
 
     @Override

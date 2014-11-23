@@ -1,7 +1,13 @@
 package com.wardziniak.reminder.fragments;
 
 import android.app.Activity;
+import android.app.LoaderManager;
+import android.content.ContentUris;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,6 +19,7 @@ import android.widget.TextView;
 
 import com.wardziniak.reminder.R;
 import com.wardziniak.reminder.activities.AddAlarmFragmentInteractionListener;
+import com.wardziniak.reminder.providers.DatabaseEntries;
 import com.wardziniak.reminder.services.AlarmManagerService;
 
 import java.util.Calendar;
@@ -23,7 +30,10 @@ import java.util.Calendar;
  * Use the {@link AddAlarmFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AddAlarmFragment extends Fragment implements View.OnClickListener {
+public class AddAlarmFragment extends Fragment implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
+
+    public static final String ARG_ALARM_ID = "alarmId";
+    public static final long NEW_ALARM = 0;
 
     private static final String ARG_YEAR = "year";
     private static final String ARG_MONTH = "month";
@@ -33,6 +43,8 @@ public class AddAlarmFragment extends Fragment implements View.OnClickListener {
     private EditText messageEditText;
     private TextView dateTextView;
     private TextView timeTextView;
+
+    private long alarmId;
 
     private AddAlarmFragmentInteractionListener mListener;
 
@@ -48,6 +60,14 @@ public class AddAlarmFragment extends Fragment implements View.OnClickListener {
         return fragment;
     }
 
+    public static AddAlarmFragment newInstance(long alarmId) {
+        AddAlarmFragment fragment = new AddAlarmFragment();
+        Bundle args = new Bundle();
+        args.putLong(ARG_ALARM_ID, alarmId);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     public AddAlarmFragment() {
         // Required empty public constructor
     }
@@ -55,6 +75,10 @@ public class AddAlarmFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            alarmId = getArguments().getLong(ARG_ALARM_ID);
+        }
+        getLoaderManager().initLoader(0, null, this);
     }
 
     @Override
@@ -102,7 +126,7 @@ public class AddAlarmFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.saveButton:
-                mListener.setAlarm(messageEditText.getText().toString());
+                mListener.setAlarm(alarmId, messageEditText.getText().toString());
                 break;
             case R.id.datePickerId:
                 mListener.showDatePicker();
@@ -123,4 +147,28 @@ public class AddAlarmFragment extends Fragment implements View.OnClickListener {
         timeTextView.setText("" + calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE));
     }
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        if (alarmId != 0)
+            return new CursorLoader(getActivity(), ContentUris.withAppendedId(Uri.parse(DatabaseEntries.SCHEME + DatabaseEntries.AUTHORITY + DatabaseEntries.ALARM_PATH), alarmId),
+                    DatabaseEntries.sAlarmProjection, null, null, null);
+        else
+            return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        cursor.moveToFirst();
+        messageEditText.setText(cursor.getString(cursor.getColumnIndex(DatabaseEntries.AlarmEntry.COLUMN_NAME_ALA_MESSAGE)));
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(cursor.getLong(cursor.getColumnIndex(DatabaseEntries.AlarmEntry.COLUMN_NAME_ALA_TIMESTAMP)));
+        updateDate(calendar);
+        updateTime(calendar);
+        mListener.onAlarmLoad(calendar);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+
+    }
 }

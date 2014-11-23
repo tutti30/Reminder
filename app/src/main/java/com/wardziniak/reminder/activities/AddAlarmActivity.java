@@ -2,7 +2,10 @@ package com.wardziniak.reminder.activities;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.app.LoaderManager;
 import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -29,7 +32,8 @@ public class AddAlarmActivity extends Activity implements AddAlarmFragmentIntera
         calendar = Calendar.getInstance();
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-        addAlarmFragment = AddAlarmFragment.newInstance();
+        final long alarmId = getIntent().getLongExtra(AddAlarmFragment.ARG_ALARM_ID, 0);
+        addAlarmFragment = AddAlarmFragment.newInstance(alarmId);
         getFragmentManager().beginTransaction().add(android.R.id.content, addAlarmFragment).commit();
     }
 
@@ -91,14 +95,25 @@ public class AddAlarmActivity extends Activity implements AddAlarmFragmentIntera
     }
 
     @Override
-    public void setAlarm(String message) {
-        Log.d("Reminder", "setAlarm");
+    public void setAlarm(long alarmId, String message) {
+        Log.d("Reminder", "setAlarm:" + alarmId);
         Intent startServiceIntent = new Intent(this, AlarmManagerService.class);
         startServiceIntent.putExtra(AlarmManagerService.EXTRA_TRIGGER_TIME, calendar.getTimeInMillis());
         startServiceIntent.putExtra(AlarmManagerService.EXTRA_ALARM_MESSAGE, message);
-        startServiceIntent.setAction(AlarmManagerService.ACTION_ADD_ALARM);
+        if (alarmId == 0) {
+            startServiceIntent.setAction(AlarmManagerService.ACTION_ADD_ALARM);
+        }
+        else {
+            startServiceIntent.setAction(AlarmManagerService.ACTION_EDIT_ALARM);
+            startServiceIntent.putExtra(AlarmManagerService.EXTRA_ALARM_ID, alarmId);
+        }
         startService(startServiceIntent);
-        setResult(RESULT_OK);
+        //setResult(RESULT_OK);
         finish();
+    }
+
+    @Override
+    public void onAlarmLoad(Calendar calendar) {
+        this.calendar = calendar;
     }
 }
